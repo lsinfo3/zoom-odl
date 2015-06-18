@@ -1,5 +1,7 @@
 # Work in Progress - ZOOM
 # 
+The ZOOM module is published under the EPL-1.0 license (https://www.eclipse.org/legal/epl-v10.html).
+# 
 ---
 ## ZOOM is a module for OpenDaylight that is capable of identifying heavy hitting flows by performing a dissection of the IP range.
 ## 
@@ -63,4 +65,9 @@ osgi> zoomTTInteractive -trace /home/trace/trace.pcap ...
 
 ##### Automatic Mode
 In automatic mode all parameters get specified directly in the Zoom.java main class. By this it is possible to run the algorithm multiple times with different parameter combinations automatically.
+
+In order to run the algorithm in automatic mode the `Zoom.java` main needs to contain all parameter combinations that should be used. An example of a sensible set of combinations is provided by default in the file. The parameter combinations are created and executed in
+```
+public void _zoomAutomated(CommandInterpreter ci)
+```
 
