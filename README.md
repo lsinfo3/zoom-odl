@@ -1,6 +1,6 @@
 # Work in Progress - ZOOM
 
-*ZOOM* is a module for OpenDaylight that is capable of identifying heavy hitting flows by performing a dissection of the IP range.
+*ZOOM* is a module for OpenDaylight that is capable of identifying heavy hitting flows by performing a dissection of the IP range. It can be downloaded from the [releases](https://github.com/lsinfo3/zoom-odl/releases/) page.
 
 ## Building
 The module can be built using [Maven 2](https://maven.apache.org/).
