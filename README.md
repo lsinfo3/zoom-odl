@@ -1,4 +1,4 @@
-# Work in Progress - ZOOM
+# ZOOM
 
 *ZOOM* is a module for OpenDaylight that is capable of identifying heavy hitting flows by performing a dissection of the IP range. It can be downloaded from the [releases](https://github.com/lsinfo3/zoom-odl/releases/) page.
 
@@ -71,6 +71,12 @@ osgi> zoomTTInteractive -trace /home/trace/trace.pcap ...
 In automatic mode, all parameters get specified directly in the [org.opendaylight.controller.zoom.internal.Zoom](https://github.com/lsinfo3/zoom-odl/blob/58c2fd0a44feec265fd4a554e97dced8581ffad6/src/main/java/org/opendaylight/controller/zoom/internal/Zoom.java#L133-L191) class. This allows to run the algorithm multiple times with different parameter combinations automatically.
 
 In order to run the algorithm in automatic mode, all parameter combinations that should be evaluated have to be specified. An example of a reasonable set of combinations is provided [in the file](https://github.com/lsinfo3/zoom-odl/blob/58c2fd0a44feec265fd4a554e97dced8581ffad6/src/main/java/org/opendaylight/controller/zoom/internal/Zoom.java#L133-L191).
+
+Accordingly, the command to issue from the osgi console to start the algorithm in automatic mode is
+```
+osgi> zoomAutomated
+```
+and since all parameters are provided directly within the java method, no further parameters need to be set.
 
 ## License
 
