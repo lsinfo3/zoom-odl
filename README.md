@@ -55,7 +55,7 @@ As root permissions are required for `tcpreplay`, a sudo password has to be prov
 In order to run the algorithms provided by the module, two modes are provided.
 
 ### Interactive Mode
-In interactive mode, all parameters need to be provided via the osgi console start the algorithm. Each implementation features its own interactive call. Following are examples on how to call the different algorithms:
+In interactive mode, all parameters need to be provided via the osgi console in order to start the algorithm. Each implementation features its own interactive call. Following are examples on how to call the different algorithms:
 
 ```console
 osgi> zoomBaseInteractive -trace /home/trace/trace.pcap -nflows 2 -ntop 1 -t 2 -ncycles 1 -offset 5
