@@ -10,7 +10,7 @@ By running
 $ mvn clean install
 ```
 
-or a respective command from the *ZOOM* root folder, the built module will end up in a `./target/zoom-X.X.jar` file.
+or a respective command from the *ZOOM* root folder, the built module will end up in a `./target/zoom-X.X.X.jar` file.
 
 ## Dependencies
 The current version of *ZOOM* uses [tcpreplay-edit](https://github.com/appneta/tcpreplay) to replay a PCAP trace file to a switch connected to the OpenDaylight controler. Either a virtual OpenVSwitch in [Mininet](https://github.com/mininet/mininet/) or OpenFlow-capable hardware switches may be used. (_NOTE: Several hardware switches have been tested and posed different issues that need to be resolved. Results may vary strongly._)
@@ -18,7 +18,7 @@ The current version of *ZOOM* uses [tcpreplay-edit](https://github.com/appneta/t
 ## Adding the *ZOOM* Module to OpenDaylight
 The current version of the ZOOM module (Version 1.0) is compatible with OpenDaylight Hydrogen 1.0, which can be downloaded from http://www.opendaylight.org/software/release-archives.
 
-In order to run OpenDaylight including the *ZOOM* module, copy the built `zoom-X.X.jar` file into `opendaylight/plugins/` and run OpenDaylight with the startup script according to the used platform (_NOTE: The module has only been tested under Linux_). After the first installation of the module, it needs to be manually activated from the osgi console. To do so simply follow the steps below.
+In order to run OpenDaylight including the *ZOOM* module, copy the built `zoom-X.X.X.jar` file into `opendaylight/plugins/` and run OpenDaylight with the startup script according to the used platform (_NOTE: The module has only been tested under Linux_). After the first installation of the module, it needs to be manually activated from the osgi console. To do so simply follow the steps below.
 
 ```console
 # For Linux systems to start OpenDaylight
