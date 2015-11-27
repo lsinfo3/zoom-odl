@@ -28,7 +28,7 @@ public class ZoomTT implements IZoom {
 	private IFlowProgrammerService programmer;
 	private IReadService reader;
 	private Logger logger;
-	private String sudoPassword = "password";
+	private String sudoPassword = "Ork45_re";
 	private String intf1 = "s1";
 	
 	public ZoomTT(ISwitchManager switchManager, IFlowProgrammerService programmer, IReadService reader) {
@@ -288,7 +288,27 @@ public class ZoomTT implements IZoom {
 
 					if (localCurrentIP.getNumberOfHosts() > 1) {
 						
+						// NEW
+						int numberOfFlows = flowCountPerIP; 
+						
+						int nmb = localCurrentIP.getNetmaskByte();
 						int newSrcNetmask = localCurrentIP.getNumericNetmask() >> shiftwidth;
+						int[] newSrcNetmaskBytes = ip2int(convertNumericIpToSymbolic(newSrcNetmask));
+						// debug(resultPath + "debug", "SrcBefore: " + convertNumericIpToSymbolic(newSrcNetmask));
+						if (nmb < 3 && newSrcNetmaskBytes[nmb+1] != 0) {
+							int[] tmpMask = new int[4];
+							for (int q = 0; q < 4; q++) {
+								if (q <= nmb)
+									tmpMask[q] = 255;
+								else
+									tmpMask[q] = 0;
+							}
+							IPv4 tmpIP = new IPv4(localCurrentIP.getIP(), ip2string(tmpMask));
+							newSrcNetmask = tmpIP.getNumericNetmask();
+							numberOfFlows = 256 - ip2int(localCurrentIP.getNetmask())[nmb];
+						}
+						// debug(resultPath + "debug", "SrcAfter: " + convertNumericIpToSymbolic(newSrcNetmask));
+						// UNTIL HERE
 						srcOne = new IPv4(localCurrentIP.getIP(), numeric2Symbolic(newSrcNetmask));
 
 						changeFlag = true;
@@ -300,7 +320,7 @@ public class ZoomTT implements IZoom {
 
 						boolean netmaskJumperFlag = false;
 						int temp = localCurrentIP.getNetmaskByte();
-						for (int j = 1; j < flowCountPerIP; j++) {
+						for (int j = 1; j < numberOfFlows; j++) {
 							for (int i = 0; i < 4; i++) {
 								if (i == temp) {
 									srcIP[i] = srcIP[i] + 256 - srcOneNetmask[i];

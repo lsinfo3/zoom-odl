@@ -133,10 +133,11 @@ public class Zoom implements IReadServiceListener, CommandProvider {
 	public void _zoomAutomated(CommandInterpreter ci) {
 		
 		// Path to a pcap trace file that is used for traffic replay
-		String path = "path/to/trace/file.pcap";
+		String path = "/home/sge/Dokumente/zoom/60to120.pcap";
 		
 		// The following loops will run all defined tests in sequence
 		// This will take a LONG time
+		/*
 		this.algorithm = new ZoomTT(switchManager, programmer, reader);
 		{
 		int[] nflows = {256};
@@ -150,8 +151,9 @@ public class Zoom implements IReadServiceListener, CommandProvider {
 					for (int _offset: offset)
 						this.algorithm.start(logger, _nflows, _ntop, _twait, _offset, 10, path);
 		}
-		
+		*/
 		this.algorithm = new ZoomBase(switchManager, programmer, reader);
+		/*
 		{
 		int[] nflows = {2};
 		int[] ntop = {1};
@@ -164,6 +166,7 @@ public class Zoom implements IReadServiceListener, CommandProvider {
 					for (int _offset: offset)
 						this.algorithm.start(logger, _nflows, _ntop, _twait, _offset, 10, path);
 		}
+		
 		{
 		int[] nflows = {4};
 		int[] ntop = {1, 2};
@@ -176,10 +179,11 @@ public class Zoom implements IReadServiceListener, CommandProvider {
 					for (int _offset: offset)
 						this.algorithm.start(logger, _nflows, _ntop, _twait, _offset, 10, path);
 		}
+		*/
 		{
 		int[] nflows = {16};
-		int[] ntop = {1, 4, 8};
-		int[] twait = {1, 2, 5};
+		int[] ntop = {/*1, 4,*/ 8};
+		int[] twait = {/*1, 2,*/ 5};
 		int[] offset = {5, 10, 20, 30, 40, 50};
 		
 		for (int _nflows : nflows)

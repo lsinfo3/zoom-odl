@@ -1,5 +1,8 @@
 package org.opendaylight.controller.zoom.internal;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -293,6 +296,28 @@ public abstract class AbstractAlgorithmRunnable implements Runnable {
 		IPv4 ip = new IPv4(newStartIP, newStartNetmask);
 
 		return ip;
+	}
+	
+	protected String convertNumericIpToSymbolic(Integer ip) {
+		StringBuffer sb = new StringBuffer(15);
+		for (int shift = 24; shift > 0; shift -= 8) {
+			// process 3 bytes, from high order byte down.
+			sb.append(Integer.toString((ip >>> shift) & 0xff));
+			sb.append('.');
+		}
+		sb.append(Integer.toString(ip & 0xff));
+		return sb.toString();
+	}
+	
+	protected void debug(String sFile, String message) {
+		try {
+			w = new PrintWriter(new FileOutputStream(new File(sFile), true /* append = true */));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		w.append(message + "\n");
+		w.close();
 	}
 
 	public abstract void run();

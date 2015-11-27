@@ -28,7 +28,7 @@ public class ZoomBase implements IZoom {
 	private IFlowProgrammerService programmer;
 	private IReadService reader;
 	private Logger logger;
-	private String sudoPassword = "password";
+	private String sudoPassword = "Ork45_re";
 	private String intf1 = "s1";
 	
 	public ZoomBase(ISwitchManager switchManager, IFlowProgrammerService programmer, IReadService reader) {
@@ -213,7 +213,7 @@ public class ZoomBase implements IZoom {
 			
 			String resultPath = "results/ZoomBase/";
 			File theDir = new File(resultPath + this.flowCount + "/" + this.topFlows + "/" + this.sleepTime / 1000 + "/");
-
+			
 			if (!theDir.exists()) {
 				try {
 					theDir.mkdirs();
@@ -221,6 +221,8 @@ public class ZoomBase implements IZoom {
 					se.printStackTrace();
 				}
 			}
+			
+			debug(resultPath + "debug", "\n NEW RUN \n");
 
 			String parameterString = "# Start: " + start;
 
@@ -273,6 +275,7 @@ public class ZoomBase implements IZoom {
 			}
 
 			String biggestFlowString = "";
+		
 			
 			while (changeFlag) {
 				changeFlag = false;
@@ -289,12 +292,15 @@ public class ZoomBase implements IZoom {
 						topFlowCount = this.topFlows;
 						FlowOnNode biggestFlow = findBiggestFlow(currentFlowList);
 						if (biggestFlow == null) {
+							for (FlowOnNode f : getCurrentFlows(node)) {
+								w.println(f);
+							}
 							break;
 						}
 
 						localCurrentSrcIP = extractSrcFromFlow(biggestFlow);
 						localCurrentDstIP = extractDstFromFlow(biggestFlow);
-
+						debug(resultPath + "debug", "Biggest Flow: " + localCurrentSrcIP.getIP() + " -> " + localCurrentDstIP.getIP());
 						biggestFlowString += "\n" + localCurrentSrcIP.getIP() + ";" + localCurrentSrcIP.getNetmask() + ";" + localCurrentDstIP.getIP() + ";" + localCurrentDstIP.getNetmask() + ";" + biggestFlow.getByteCount()*8 / (this.sleepTime / 1000);
 
 					}
@@ -308,7 +314,29 @@ public class ZoomBase implements IZoom {
 					if (localCurrentSrcIP.getNumberOfHosts() > 1) {
 
 						changeFlag = true;
+						
+						// NEW
+						int numberOfFlows = flowCountPerIP; 
+						
+						int nmb = localCurrentSrcIP.getNetmaskByte();
 						int newSrcNetmask = localCurrentSrcIP.getNumericNetmask() >> shiftwidth;
+						int[] newSrcNetmaskBytes = ip2int(convertNumericIpToSymbolic(newSrcNetmask));
+						debug(resultPath + "debug", "SrcBefore: " + convertNumericIpToSymbolic(newSrcNetmask));
+						if (nmb < 3 && newSrcNetmaskBytes[nmb+1] != 0) {
+							int[] tmpMask = new int[4];
+							for (int q = 0; q < 4; q++) {
+								if (q <= nmb)
+									tmpMask[q] = 255;
+								else
+									tmpMask[q] = 0;
+							}
+							IPv4 tmpIP = new IPv4(localCurrentSrcIP.getIP(), ip2string(tmpMask));
+							newSrcNetmask = tmpIP.getNumericNetmask();
+							numberOfFlows = 256 - ip2int(localCurrentSrcIP.getNetmask())[nmb];
+						}
+						debug(resultPath + "debug", "SrcAfter: " + convertNumericIpToSymbolic(newSrcNetmask));
+						// UNTIL HERE
+						
 						srcOne = new IPv4(localCurrentSrcIP.getIP(), numeric2Symbolic(newSrcNetmask));
 
 						srcList.add(srcOne);
@@ -320,7 +348,7 @@ public class ZoomBase implements IZoom {
 
 						boolean netmaskJumperFlag = false;
 						int temp = localCurrentSrcIP.getNetmaskByte();
-						for (int j = 1; j < flowCountPerIP; j++) {
+						for (int j = 1; j < numberOfFlows; j++) {
 							for (int i = 0; i < 4; i++) {
 								if (i == temp) {
 									srcIP[i] = srcIP[i] + 256 - srcOneNetmask[i];
@@ -331,13 +359,36 @@ public class ZoomBase implements IZoom {
 								}
 							}
 							srcList.add(new IPv4(ip2string(srcIP), numeric2Symbolic(newSrcNetmask)));
+							debug(resultPath + "debug", "Src: " + ip2string(srcIP) + "/" + numeric2Symbolic(newSrcNetmask));
 						}
 					} else
 						srcList.add(srcOne);
 
 					if (localCurrentDstIP.getNumberOfHosts() > 1) {
 						changeFlag = true;
+						
+						// NEW
+						int numberOfFlows = flowCountPerIP; 
+						
+						int nmb = localCurrentDstIP.getNetmaskByte();
 						int newDstNetmask = localCurrentDstIP.getNumericNetmask() >> shiftwidth;
+						int[] newDstNetmaskBytes = ip2int(convertNumericIpToSymbolic(newDstNetmask));
+						debug(resultPath + "debug", "DstBefore: " + convertNumericIpToSymbolic(newDstNetmask));
+						if (nmb < 3 && newDstNetmaskBytes[nmb+1] != 0) {
+							int[] tmpMask = new int[4];
+							for (int q = 0; q < 4; q++) {
+								if (q <= nmb)
+									tmpMask[q] = 255;
+								else
+									tmpMask[q] = 0;
+							}
+							IPv4 tmpIP = new IPv4(localCurrentDstIP.getIP(), ip2string(tmpMask));
+							newDstNetmask = tmpIP.getNumericNetmask();
+							numberOfFlows = 256 - ip2int(localCurrentDstIP.getNetmask())[nmb];
+						}
+						debug(resultPath + "debug", "DstAfter: " + convertNumericIpToSymbolic(newDstNetmask));
+						// UNTIL HERE
+						
 						dstOne = new IPv4(localCurrentDstIP.getIP(), numeric2Symbolic(newDstNetmask));
 
 						dstList.add(dstOne);
@@ -349,7 +400,7 @@ public class ZoomBase implements IZoom {
 
 						boolean netmaskJumperFlag = false;
 						int temp = localCurrentDstIP.getNetmaskByte();
-						for (int j = 1; j < flowCountPerIP; j++) {
+						for (int j = 1; j < numberOfFlows; j++) {
 							for (int i = 0; i < 4; i++) {
 								if (i == temp) {
 									dstIP[i] = dstIP[i] + 256 - dstOneNetmask[i];
@@ -360,6 +411,7 @@ public class ZoomBase implements IZoom {
 								}
 							}
 							dstList.add(new IPv4(ip2string(dstIP), numeric2Symbolic(newDstNetmask)));
+							debug(resultPath + "debug", "Dst: " + ip2string(dstIP) + "/" + numeric2Symbolic(newDstNetmask));
 						}
 					} else
 						dstList.add(dstOne);
@@ -378,7 +430,7 @@ public class ZoomBase implements IZoom {
 						break;
 
 				}
-
+				
 				removeAllFlowsFromNode(node);
 				
 				if(changeFlag) {
@@ -422,7 +474,6 @@ public class ZoomBase implements IZoom {
 
 			w.println(parameterString);
 			w.println(biggestFlowString);
-
 			w.close();
 
 			this.currentCycle++;
